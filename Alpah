@@ -1,0 +1,60 @@
+#include <Servo.h>
+
+Servo servo;
+
+// Pin ultrasonic
+const int trigPin = 7;
+const int echoPin = 6;
+
+// Pin servo
+const int servoPin = 9;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  servo.attach(servoPin);
+
+  // Posisi awal tutup
+  servo.write(0);
+}
+
+void loop() {
+  long durasi;
+  int jarak;
+
+  // Mengirim gelombang ultrasonic
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin, LOW);
+
+  // Membaca pantulan
+  durasi = pulseIn(echoPin, HIGH);
+
+  // Menghitung jarak
+  jarak = durasi * 0.034 / 2;
+
+  Serial.print("Jarak: ");
+  Serial.print(jarak);
+  Serial.println(" cm");
+
+  // Jika objek berada <= 20 cm
+  if (jarak > 0 && jarak <= 20) {
+
+    // Buka tutup
+    servo.write(90);
+    delay(3000);
+
+    // Tutup kembali
+    servo.write(0);
+    delay(500);
+  }
+
+  delay(100);
+}
